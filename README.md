@@ -146,6 +146,93 @@ Sistem ini realistis karena tidak mengandalkan teknologi "wah" yang sering gagal
 
 ---
 
+## **1. FILOSOFI SISTEM**
+
+* **Resilience over Aesthetics:** Kecepatan dan ketangguhan sistem di sinyal lemah lebih utama daripada tampilan visual.
+* **Human-in-the-loop:** AI memberikan rekomendasi, namun keputusan akhir distribusi ada pada Admin Posko (manusia).
+* **Fragmented Logistics:** Distribusi dilakukan secara estafet untuk menghemat energi kurir dan mengatasi rute yang sulit.
+
+---
+
+## **2. ARSITEKTUR DATA (LOGIC STRUCTURE)**
+
+### **A. Entitas Utama (Database Tables)**
+
+1. **Nodes (Posko):** Nama posko, koordinat teks, jumlah pengungsi, status (aktif/non-aktif).
+2. **Inventory:** Jenis barang, kategori (P1/P2/P3), jumlah stok, ambang batas minimal (*Safety Stock*).
+3. **Requests:** Posko peminta, jenis barang, jumlah, tingkat urgensi (Balita/Medis/Umum).
+4. **Transfer (Estafet):** Kode unik (`MED-88`), rute posko, posisi barang saat ini, status kurir.
+
+### **B. Kategori Prioritas**
+
+* **P1 (Critical):** Alat medis, obat-obatan luka berat, oksigen.
+* **P2 (Vulnerable):** Susu balita, popok, makanan pendamping ASI, obat lansia.
+* **P3 (General):** Makanan pokok, selimut, pakaian, air bersih umum.
+
+---
+
+## **3. MEKANISME AI MATCHER (THE BRAIN)**
+
+AI bekerja di belakang layar dengan rumus pembobotan untuk memberikan saran distribusi:
+
+* **Fungsi:** Membandingkan `Request` dari Posko A dengan `Surplus Stok` di Posko-posko terdekat.
+* **Safety Stock Logic:** AI dilarang mengambil barang jika sisa stok di posko pemberi sudah menyentuh ambang batas konsumsi 24 jam, **kecuali** untuk kategori **P1** dengan persetujuan manual.
+* **Output:** Notifikasi ke dashboard pusat dan dashboard admin posko terpilih.
+
+---
+
+## **4. SISTEM DISTRIBUSI: ESTAFET KODE (THE NERVE)**
+
+Sistem ini menggantikan peta dan QR code dengan **Short Alpha-Numeric Code**.
+
+1. **Generation:** Admin Posko Asal menyetujui kiriman -> Sistem membuat kode unik (contoh: `A7-X1`).
+2. **Transit Handover:**
+* Kurir membawa barang ke titik transit.
+* Admin Transit bertanya kode -> Input ke web.
+* Status di database: `Updated to Posko [ID]`.
+
+
+3. **Completion:** Saat kode dimasukkan di posko tujuan akhir, stok otomatis berpindah secara digital dan tugas ditutup.
+
+---
+
+## **5. ALUR KERJA PENGGUNA (USER STORIES)**
+
+| Pengguna | Aksi Utama | Output |
+| --- | --- | --- |
+| **Admin Posko** | Input kebutuhan & verifikasi stok masuk via kode. | Stok terupdate & request terpenuhi. |
+| **Kepala Posko** | Menyetujui/Menolak permintaan pengalihan barang. | Kendali penuh atas stok internal. |
+| **Kurir** | Standby di posko & antar barang ke titik berikutnya. | Kepastian rute & jenis barang. |
+| **Pusat Komando** | Monitor dashboard seluruh posko. | Gambaran besar situasi bencana. |
+
+---
+
+## **6. SPESIFIKASI TEKNIS (THE TECH STACK)**
+
+* **Frontend:** React.js (dengan **PWA - Progressive Web App** agar bisa di-install dan diakses cepat).
+* **Backend:** Node.js (Express) untuk pemrosesan logika cepat.
+* **Real-time:** Socket.io untuk notifikasi instan antar posko tanpa refresh.
+* **Offline Capability:** Service Workers untuk menyimpan input data sementara saat sinyal hilang (sync otomatis saat online).
+* **Security:** Role-based Access Control (Hanya Admin Posko terdaftar yang bisa input kode).
+
+---
+
+## **7. PROTOKOL KONDISI DARURAT (REALITY CHECK)**
+
+* **Tanpa Sinyal:** Komunikasi beralih ke WhatsApp/Radio. Update di web dilakukan secara manual oleh Admin di posko berikutnya yang memiliki sinyal.
+* **Penolakan Stok:** Jika Admin menolak memberikan barang, sistem mewajibkan pengisian alasan singkat untuk transparansi di Dashboard Pusat Komando.
+* **Hambatan Rute:** Jika jalur estafet terputus, Admin Posko terakhir yang memegang barang dapat melakukan "Reroute" (pindah rute) manual di sistem.
+
+---
+
+## **8. TAMPILAN ANTARMUKA (UI DESIGN GOALS)**
+
+* **High Contrast:** Mudah dibaca di bawah sinar matahari atau cahaya minim.
+* **Big Buttons:** Tombol besar untuk jari-jari relawan yang mungkin sedang kotor atau memakai sarung tangan.
+* **Minimalist:** Satu layar utama hanya berisi daftar kebutuhan paling mendesak dan kolom input kode.
+
+---
+
 ### Pesan Penutup dari Mentor:
 
 Membangun sistem untuk kemanusiaan itu berbeda dengan membangun *e-commerce*. Di sini, *user experience* yang paling penting bukan "bagus dilihat", tapi **"tidak boleh gagal saat dibutuhkan"**.

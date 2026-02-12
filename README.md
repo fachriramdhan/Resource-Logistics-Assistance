@@ -78,3 +78,57 @@ AI tidak hanya mencocokkan barang, tapi menggunakan bobot (**Weighting**):
 | **Estafet** | `id`, `kode_unik`, `posko_asal`, `posko_tujuan`, `posko_posisi_sekarang`, `status` |
 
 ---
+
+
+---
+
+### 1. User Story: Admin Posko (Pemberi Bantuan)
+
+*Sebagai Admin Posko yang memiliki stok berlebih,*
+
+* **Skenario:** Menerima permintaan pengalihan dari AI.
+* **Alur Komunikasi:**
+1. **Notifikasi:** Saya menerima notifikasi di dashboard: *"Permintaan Darurat: Posko 5 butuh 2 Tabung Oksigen. Stok Anda: 5. Rekomendasi: Alihkan 2."*
+2. **Verifikasi:** Saya melapor secara lisan ke Kepala Posko. Setelah disetujui, saya menekan tombol **"Proses Pengiriman"**.
+3. **Output:** Sistem memunculkan **Kode Transfer: `MED-88**`. Saya menuliskan kode ini di selembar kertas atau menempelkannya di barang tersebut.
+4. **Penugasan:** Saya memanggil Kurir yang sedang *standby* di posko saya dan menyerahkan barang beserta kode tersebut.
+
+
+
+### 2. User Story: Kurir (Pahlawan Estafet)
+
+*Sebagai Kurir yang bertugas mengantar barang antar posko,*
+
+* **Skenario:** Mengambil dan mengantar barang dalam jalur estafet.
+* **Alur Komunikasi:**
+1. **Instruksi:** Saya menerima instruksi dari Admin: *"Bawa paket ini ke Posko 2 (titik transit pertama). Kodenya `MED-88`."*
+2. **Perjalanan:** Saya berangkat ke Posko 2. Jika ada kendala di jalan (pohon tumbang), saya menghubungi Admin atau Kurir di posko tujuan via WhatsApp/Radio secara manual.
+3. **Serah Terima:** Sesampainya di Posko 2, saya menyerahkan barang dan menyebutkan kode **`MED-88`**. Tugas saya selesai, saya kembali ke posko asal atau menunggu perintah baru.
+
+
+
+### 3. User Story: Admin Posko Transit & Tujuan (Penerima)
+
+*Sebagai Admin di Posko Transit atau Posko Akhir,*
+
+* **Skenario:** Menerima barang dari kurir estafet.
+* **Alur Komunikasi:**
+1. **Kedatangan:** Kurir datang membawa paket. Saya tidak perlu mencari data di daftar panjang, saya cukup bertanya: *"Apa kodenya?"*
+2. **Input:** Saya memasukkan **`MED-88`** ke kotak "Terima Barang" di web.
+3. **Logika Sistem:**
+* **Jika saya Posko Transit:** Sistem akan bertanya, *"Lanjut ke posko berikutnya?"* Saya klik "Ya", lalu memanggil kurir *standby* di posko saya untuk meneruskan estafet.
+* **Jika saya Posko Akhir:** Sistem akan menampilkan pesan: *"Transfer Selesai. Stok Susu Balita bertambah 10."*
+
+
+4. **Konfirmasi:** Sistem otomatis mengirim notifikasi ke Posko Asal bahwa barang telah sampai dengan selamat di titik tersebut.
+
+
+
+---
+
+### Ringkasan Poin Penting untuk Developer (Nanti):
+
+1. **State Management:** Kode `MED-88` harus tetap sama dari Posko 1 sampai Posko 5. Yang berubah hanya `current_posko_id`-nya di database.
+2. **Validasi Kode:** Jangan biarkan sistem menerima kode yang salah. Jika kode tidak terdaftar untuk menuju posko tersebut, beri peringatan: *"Kode ini seharusnya menuju Posko X, bukan ke sini."*
+3. **Log Waktu:** Rekam setiap kali kode dimasukkan. Ini berguna untuk memantau berapa lama waktu yang dibutuhkan dari satu posko ke posko lain (untuk evaluasi kecepatan distribusi).
+

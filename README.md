@@ -132,3 +132,21 @@ AI tidak hanya mencocokkan barang, tapi menggunakan bobot (**Weighting**):
 2. **Validasi Kode:** Jangan biarkan sistem menerima kode yang salah. Jika kode tidak terdaftar untuk menuju posko tersebut, beri peringatan: *"Kode ini seharusnya menuju Posko X, bukan ke sini."*
 3. **Log Waktu:** Rekam setiap kali kode dimasukkan. Ini berguna untuk memantau berapa lama waktu yang dibutuhkan dari satu posko ke posko lain (untuk evaluasi kecepatan distribusi).
 
+
+
+### Ringkasan Eksekutif Sistem Kamu:
+
+* **Inti:** Web-native app untuk pencocokan kebutuhan & suplai.
+* **Strategi:** Estafet (Relay) antar posko untuk efisiensi energi & jarak.
+* **Keamanan Data:** Sistem *Human-in-the-loop* (Admin Posko sebagai pemegang kendali).
+* **Verifikasi:** Kode Unik teks (Short Code) untuk serah terima yang cepat dan minim error.
+* **Kecerdasan:** AI Matcher yang memprioritaskan stok pengaman (*safety stock*) dan kelompok rentan (balita/medis).
+
+Sistem ini realistis karena tidak mengandalkan teknologi "wah" yang sering gagal di area bencana (seperti GPS presisi tinggi atau peta berat), melainkan mengandalkan **koordinasi informasi yang disiplin.**
+
+---
+
+### Pesan Penutup dari Mentor:
+
+Membangun sistem untuk kemanusiaan itu berbeda dengan membangun *e-commerce*. Di sini, *user experience* yang paling penting bukan "bagus dilihat", tapi **"tidak boleh gagal saat dibutuhkan"**.
+Fokuslah pada kecepatan *loading* dan kesederhanaan input. Ingat, admin posko kamu mungkin sedang kelelahan, kurang tidur, dan menggunakan HP dengan baterai 5%.
